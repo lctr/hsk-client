@@ -1,23 +1,33 @@
 <template>
   <div class="word-item" v-if="!locked">
-    <div class="word-item-complete">
-      <input class="checkbox" type="checkbox" v-on:change="recordAttempt">
-    </div>
+
     <div class="word-item-character"> 
       {{ word.character }}
     </div>
+
     <div class="word-item-pinyin">
       <input type="text" name="userPinyin" 
         v-model="pinyinAnswer"
         v-bind:class="pronunciationStatus"
-        placeholder="pinyin">
+        placeholder="pinyin"
+        autocomplete="false">
     </div>
+
     <div class="word-item-meaning">
       <input type="text" name="userMeaning" 
         v-model="meaningAnswer"
         v-bind:class="meaningStatus"
-        placeholder="meaning">
+        placeholder="meaning"
+        autocomplete="false">
     </div>
+
+    <div class="word-item-complete">
+      <button class="checkbox" 
+        v-on:change="recordAttempt">
+        ✓
+      </button>
+    </div>
+
     <div v-if="gaveUp">
       {{ word.character }} || {{ word.pinyin }} || {{ word.meaning }}
       <br>
@@ -80,19 +90,24 @@ export default {
     recordAttempt() {
       this.locked = true; 
       let score = {
+        word: this.word,
+        input: { pinyin: this.pinyinAnswer, meaning: this.meaningAnswer },
         attempted: this.attempted ? 1 : 0,
         pronunciation: this.correctPinyin ? 1 : 0,
         meaning: this.correctMeaning ? 1 : 0
       };
-      if (this.gaveUp) {
-        score = { attempted: 0, pronunciation: -1, meaning: -1 }; 
+      let input = [this.pinyinAnswer, this.meaningAnswer]; 
+
+      if (!input.join('').trim()) {
+        score = this.giveUp(score); 
       }
       this.$emit('lock-question', score);
     },
-    giveUp() {
-      (this.correctPinyin && this.correctMeaning) 
-        ? this.gaveUp = false 
-        : this.gaveUp = true; 
+    giveUp(score) {
+      score.attempted = 0; 
+      score.pronunciation = -1; 
+      score.meaning = -1;
+      return score; 
     }
   }
 }
@@ -108,22 +123,36 @@ export default {
     padding: 10px; 
     border-bottom: 1px #ccc dotted;
     display: grid; 
-    grid-template-columns: 50px 200px 1fr 1fr;
+    grid-template-columns: minmax(160px, auto) 1fr 1fr 50px;
     column-gap: 0.5em; 
     align-items: center;
   }
 
+  .word-item:hover {
+    background: #e2e2e2;
+  }
+
+  .word-item:hover .word-item-character {
+    text-shadow: 0px 2px 2px #f2f2f2;
+  }
+
   .word-item-character {
     font-size: 2.5em;
+    text-align: center;
   }
 
   .checkbox {
-    margin-top: 4px;
-    padding: 6px 8px;
-    height: 1.5em; 
-    width: 1.5em;
+    padding: 4px 10px;
     display: inline-block;
-    border-radius: 5px;
+    border-radius: 15px;
+    border: 1px solid #ccc; 
+    font-size: 18px;
+  }
+
+  .checkbox:hover {
+    background-color: #333; 
+    color: #f2f2f2; 
+    transition-duration: 500ms;
   }
   
   input {
