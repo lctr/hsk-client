@@ -1,12 +1,12 @@
 <template>
-  <div class="quiz-selection">
-    <select v-model="selected">
+  <div class="quiz-selection" v-if="!disabled">
+    <select v-model="selected" :disabled="disabled">
       <option disabled value="">Please select one</option>
       <option v-for="(level, idx) in levels" v-bind:key="idx"> 
         {{ levels[idx] }} 
       </option>
     </select>
-    <button @click="levelSelected" :disabled="!selected">Go!</button>
+    <button class="btn" @click="levelSelected" :disabled="ready">Go!</button>
   </div>
 </template>
 
@@ -16,6 +16,7 @@ export default {
   data() {
     return {
       selected: null,
+      disabled: false,
       levels: ['hsk1', 'hsk2', 'hsk3', 'hsk4', 'hsk5', 'hsk6']
     }
   },
@@ -24,7 +25,13 @@ export default {
       e.preventDefault();
       const level = this.selected.replace('hsk', '');
       console.log(level); 
+      this.disabled = true; 
       this.$emit('level-selected', level);
+    }
+  },
+  computed: {
+    ready() {
+      return this.disabled ? true : !this.selected; 
     }
   }
 }
@@ -33,6 +40,7 @@ export default {
 <style scoped>
   .quiz-selection {
     padding: 10px; 
+    z-index: 999;
   }
 
   select {

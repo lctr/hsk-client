@@ -5,15 +5,17 @@
     <div v-if="loading">
       <LoadingDots />
     </div>
-    <div v-if="loaded">
+    <div id="quiz" v-if="loaded">
       <Words v-bind:words="words" v-on:lock-question="logAttempt" />
     </div>
-    <div v-else-if="attempted === quizLength">
+    <div v-if="attempted === quizLength">
       Attempted: {{ attempted }} <br>
       Score: {{ finalScore }} <br>
       Correct pronunciation count: {{ correctPinyin }} <br>
       Correct meaning count: {{ correctMeaning }} 
-
+    </div>
+    <div v-if="sleepingServer">
+      Server's asleep. Awaken her?? 
     </div>
   </div>
 </template>
@@ -25,6 +27,8 @@ import LoadingDots from './components/LoadingDots';
 import Words from './components/Words';
 import axios from 'axios';
 
+const SERVER = 'http://localhost:4001';
+
 export default {
   name: 'App',
   components: {
@@ -34,13 +38,14 @@ export default {
     Words
   }, data() {
     return {
+      sleepingServer: true,
       quizzing: false,
       loading: false,
       loaded: false,
       words: [],
       wordBank: [],
       quizLength: 25,
-      attemped: 0,
+      attempted: 0,
       correctPinyin: 0,
       correctMeaning: 0,
       finalScore: null
@@ -49,7 +54,7 @@ export default {
   methods: {
     loadQuiz(level) {
       this.toggleLoading();
-      axios.get(`http://localhost:4001/words/bylevel/${level}`)
+      axios.get(`${SERVER}/words/bylevel/${level}`)
         .then(words => {
           this.words = this.prepareQuiz(words.data); 
           this.toggleLoading();
@@ -83,8 +88,8 @@ export default {
       this.loaded = !this.loading; 
     },
     logAttempt(score) {
-      let { attempted, pronunciation, meaning} = score; 
-      this.attempted += attempted; 
+      let { pronunciation, meaning} = score; 
+      this.attempted += 1; 
       this.correctPinyin += pronunciation; 
       this.correctMeaning += meaning; 
 
@@ -104,6 +109,14 @@ export default {
         return 0;
       }
     }
+  },
+  created() {
+    axios.get(`${SERVER}/words/ping`)
+      .then(res => this.sleepingServer = !res)
+      .catch(e => {
+        console.error(e); 
+        this.sleepingServer = true; 
+      });
   }
 }
 </script>
@@ -116,7 +129,7 @@ export default {
   }
 
   body {
-    font-family: Arial, Arial, Helvetica, sans-serif;
+    font-family: Helvetica, sans-serif;
     line-height: 1.4;
   }
 
@@ -132,6 +145,7 @@ export default {
     color: #fff;
     padding: 7px 20px;
     cursor: pointer;
+    border-radius: 4px;
   }
 
   .btn:hover {

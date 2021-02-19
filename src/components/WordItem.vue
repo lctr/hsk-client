@@ -1,7 +1,7 @@
 <template>
   <div class="word-item" v-if="!locked">
     <div class="word-item-complete">
-      <input type="checkbox" v-on:change="recordAttempt">
+      <input class="checkbox" type="checkbox" v-on:change="recordAttempt">
     </div>
     <div class="word-item-character"> 
       {{ word.character }}
@@ -10,15 +10,19 @@
       <input type="text" name="userPinyin" 
         v-model="pinyinAnswer"
         v-bind:class="pronunciationStatus"
-        placeholder="pinyin"
-        @input="setAttempted">
+        placeholder="pinyin">
     </div>
     <div class="word-item-meaning">
       <input type="text" name="userMeaning" 
         v-model="meaningAnswer"
         v-bind:class="meaningStatus"
-        placeholder="meaning"
-        @input="setAttempted">
+        placeholder="meaning">
+    </div>
+    <div v-if="gaveUp">
+      {{ word.character }} || {{ word.pinyin }} || {{ word.meaning }}
+      <br>
+      W O M P ! <br>
+      -1 point for u :/ 
     </div>
   </div>
 </template>
@@ -29,13 +33,16 @@ export default {
   props: ["word"],
   data() {
     return {
-      attempted: false,
       pinyinAnswer: '',
       meaningAnswer: '',
-      locked: false
+      locked: false,
+      gaveUp: false
     }
   },
   computed: {
+    attempted() {
+      return this.pinyinAnswer + this.meaningAnswer; 
+    },
     pronunciationStatus() {
       let correct = false, incorrect = false; 
       if (this.pinyinAnswer) {
@@ -47,7 +54,7 @@ export default {
       }
       return { 'is-correct': correct, 'is-incorrect': incorrect };
     },
-    correctPinyin() {
+    correctPinyin() { 
       let answer = [this.word.pinyin, this.word.pin1yin1], 
         attempt = this.pinyinAnswer.trim().toLowerCase(); 
       return answer.includes(attempt);
@@ -70,23 +77,32 @@ export default {
     }
   },
   methods: {
-    setAttempted() {
-      this.attempted = true; 
-    },
     recordAttempt() {
       this.locked = true; 
-      const score = {
+      let score = {
         attempted: this.attempted ? 1 : 0,
-        pronunciation: this.correctPinyin() ? 1 : 0,
-        meaning: this.correctMeaning() ? 1 : 0
+        pronunciation: this.correctPinyin ? 1 : 0,
+        meaning: this.correctMeaning ? 1 : 0
+      };
+      if (this.gaveUp) {
+        score = { attempted: 0, pronunciation: -1, meaning: -1 }; 
       }
       this.$emit('lock-question', score);
+    },
+    giveUp() {
+      (this.correctPinyin && this.correctMeaning) 
+        ? this.gaveUp = false 
+        : this.gaveUp = true; 
     }
   }
 }
 </script>
 
 <style>
+  :root {
+    --dt: 900ms; 
+  }
+
   .word-item {
     background: #f2f2f2;
     padding: 10px; 
@@ -101,27 +117,32 @@ export default {
     font-size: 2.5em;
   }
 
-  input[type='checkbox'] {
+  .checkbox {
     margin-top: 4px;
-    padding: 4px 6px;
+    padding: 6px 8px;
     height: 1.5em; 
     width: 1.5em;
     display: inline-block;
-    border: none;
+    border-radius: 5px;
   }
+  
   input {
-    padding: 4px 6px; 
-    font-size: 1.5em;
+    padding: 6px 8px; 
     display: inline-block;
+    border-radius: 10px;
+    border: 1px solid #999;
+    background-color: #f9f9f9; 
   }
 
   .is-correct {
     color: #2c4634; 
     background-color: #c6ebc9;
+    transition-delay: var(--dt);
   }
 
   .is-incorrect {
     color: #7e4646; 
     background-color: #ffb4b4;
+    transition-delay: var(--dt);
   }
 </style>
