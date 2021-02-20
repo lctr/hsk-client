@@ -1,7 +1,7 @@
 # hsk-client
 Front-end for HSK flashcard/drill app, HSK standing for the *Hanyu Shuiping Kaoshi (汉语水平考试)* Mandarin Chinese Proficiency standard. 
 
-The back-end can be found in the [hsk-server](https://github.com/lctr/hsk-server repository.
+The back-end can be found in the [hsk-server](https://github.com/lctr/hsk-server) repository.
 *README doc still to be completed.*
 
 ## Project setup
