@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="header">
     <h1>你好, 你想学习什么？</h1>
   </div>
 </template>
@@ -10,5 +10,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+  .header {
+    margin: auto;
+    text-align: center;
+    width: 100%;
+  }
 </style>

@@ -1,12 +1,15 @@
 <template>
   <div class="quiz-selection" v-if="!disabled">
+    <h3>Select an HSK level to be quizzed on.</h3>
     <select v-model="selected" :disabled="disabled">
       <option disabled value="">Please select one</option>
       <option v-for="(level, idx) in levels" v-bind:key="idx"> 
         {{ levels[idx] }} 
       </option>
     </select>
-    <button class="btn" @click="levelSelected" :disabled="ready">Go!</button>
+    <button class="btn" @click="levelSelected" :disabled="ready">
+      开始 ~ <i>start</i> !
+    </button>
   </div>
 </template>
 
@@ -40,17 +43,32 @@ export default {
 <style scoped>
   .quiz-selection {
     padding: 10px; 
-    z-index: 999;
+    margin: auto;
   }
 
-  select {
+  select, option {
     padding: 4px 6px; 
-    width: 200px;
+    min-width: 200px;
+    border-radius: 4px;
   }
 
   button {
     padding: 4px 6px;
     margin-left: 10px;
+  }
+
+  .btn {
+    display: inline-block;
+    border: none;
+    background: #555;
+    color: #fff;
+    padding: 4px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .btn:hover {
+    background: #666;
   }
 
 </style>
