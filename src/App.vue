@@ -59,7 +59,6 @@ export default {
     }
   }, 
   methods: {
-    // get all possible words satisfying criteria
     loadQuiz(level) {
       this.toggleLoading();
       axios.get(`${SERVER}/words/bylevel/${level}`)
@@ -78,12 +77,12 @@ export default {
       this.loading = !this.loading; 
       this.loaded = !this.loading; 
     },
-    // functionally equivalent to a "next", only the order in which this quiz is
-    // completed does not matter
+    // functionally equivalent to a "next", only the order in which 
+    // this quiz is completed does not matter
     logAttempt(score) {
       let { pronunciation, meaning, attempted, input, word } = score; 
       // take user input and update appropriate quiz metrics to be used
-      // by QuizResultes subcomponent
+      // by QuizResults subcomponent
       this.attempted += 1; 
       this.correctPinyin += pronunciation; 
       this.correctMeaning += meaning; 
