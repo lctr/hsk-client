@@ -44,6 +44,7 @@ export default {
   .quiz-selection {
     padding: 10px; 
     margin: auto;
+    text-align: center; 
   }
 
   select, option {
