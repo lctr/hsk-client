@@ -32,7 +32,7 @@ import Words from './components/Words';
 import QuizResults from './components/QuizResults';
 import axios from 'axios';
 
-const SERVER = 'http://localhost:4001';
+const SERVER = 'https://hsk-server.herokuapp.com';
 
 export default {
   name: 'App',
