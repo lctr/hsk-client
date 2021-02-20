@@ -9,10 +9,13 @@
       <Words v-bind:words="words" v-on:lock-question="logAttempt" />
     </div>
     <div v-if="attempted === quizLength">
-      Attempted: {{ attempted }} <br>
-      Score: {{ finalScore }} <br>
-      Correct pronunciation count: {{ correctPinyin }} <br>
-      Correct meaning count: {{ correctMeaning }} 
+      <QuizResults v-if="completed"
+        v-bind:wordLog="wordLog" 
+        v-bind:attempted="attempted"
+        v-bind:skippedWords="skippedWords"
+        v-bind:quizLength="quizLength"
+        v-bind:correctPinyin="correctPinyin"
+        v-bind:correctMeaning="correctMeaning" />
     </div>
     <div v-if="sleepingServer">
       Server's asleep. Awaken her?? 
@@ -21,10 +24,12 @@
 </template>
 
 <script>
+import Utils from './assets/utils'; 
 import Header from './components/Header';
 import SelectLevel from './components/SelectLevel';
 import LoadingDots from './components/LoadingDots';
 import Words from './components/Words';
+import QuizResults from './components/QuizResults';
 import axios from 'axios';
 
 const SERVER = 'http://localhost:4001';
@@ -35,28 +40,31 @@ export default {
     Header,
     SelectLevel,
     LoadingDots,
-    Words
+    Words,
+    QuizResults
   }, data() {
     return {
-      sleepingServer: true,
+      sleepingServer: null,
       quizzing: false,
       loading: false,
       loaded: false,
       words: [],
-      wordBank: [],
+      wordLog: [],
+      skippedWords: [],
       quizLength: 25,
       attempted: 0,
       correctPinyin: 0,
       correctMeaning: 0,
-      finalScore: null
+      completed: false
     }
   }, 
   methods: {
+    // get all possible words satisfying criteria
     loadQuiz(level) {
       this.toggleLoading();
       axios.get(`${SERVER}/words/bylevel/${level}`)
         .then(words => {
-          this.words = this.prepareQuiz(words.data); 
+          this.words = Utils.shuffleArray(words.data, this.quizLength); 
           this.toggleLoading();
           this.quizzing = true; 
         })
@@ -66,47 +74,28 @@ export default {
           this.quizzing = false; 
         }); 
     },
-    prepareQuiz(words) {
-      const len = words.length; 
-      let indxs = [], r = this.quizLength, rand;
-      do {
-        rand = Math.floor(Math.random() * len);
-        if (indxs.includes(rand)) {
-          r++;
-        } else {
-          indxs.push(rand);
-        }
-        r--;
-      } while (r);
-      for (let i = 0; i < this.quizLength; i++) {
-        indxs[i] = words[indxs[i]]; 
-      }
-      return indxs; 
-    },
     toggleLoading() {
       this.loading = !this.loading; 
       this.loaded = !this.loading; 
     },
+    // functionally equivalent to a "next", only the order in which this quiz is
+    // completed does not matter
     logAttempt(score) {
-      let { pronunciation, meaning} = score; 
+      let { pronunciation, meaning, attempted, input, word } = score; 
+      // take user input and update appropriate quiz metrics to be used
+      // by QuizResultes subcomponent
       this.attempted += 1; 
       this.correctPinyin += pronunciation; 
       this.correctMeaning += meaning; 
-
+      word.input = input;
+      if (attempted === 0) {
+        this.skippedWords.push(word);
+      } else {
+        this.wordLog.push(word);
+      }
       if (this.attempted === this.quizLength) {
         this.quizzing = false; 
-        this.finalScore = this.quizScore(); 
-      }
-    }
-  },
-  computed: {
-    quizScore() {
-      let denominator = 2 * this.attempted, 
-        numerator = this.correctPinyin + this.correctMeaning; 
-      if (denominator) {
-        return Math.round((numerator / denominator) * 100, 4); 
-      } else {
-        return 0;
+        this.completed = true; 
       }
     }
   },
@@ -138,17 +127,4 @@ export default {
     width: 98%;
   }
 
-  .btn {
-    display: inline-block;
-    border: none;
-    background: #555;
-    color: #fff;
-    padding: 7px 20px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-
-  .btn:hover {
-    background: #666;
-  }
 </style>
