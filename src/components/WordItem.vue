@@ -10,7 +10,7 @@
         v-model="pinyinAnswer"
         v-bind:class="pronunciationStatus"
         placeholder="pinyin"
-        autocomplete="false">
+        autocomplete="off">
     </div>
 
     <div class="word-item-meaning">
@@ -18,7 +18,7 @@
         v-model="meaningAnswer"
         v-bind:class="meaningStatus"
         placeholder="meaning"
-        autocomplete="false">
+        autocomplete="off">
     </div>
 
     <div class="word-item-complete">
