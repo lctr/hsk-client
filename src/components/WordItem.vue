@@ -23,7 +23,7 @@
 
     <div class="word-item-complete">
       <button class="checkbox" 
-        v-on:change="recordAttempt">
+        v-on:click="recordAttempt">
         ✓
       </button>
     </div>
