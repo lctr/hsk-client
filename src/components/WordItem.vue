@@ -68,7 +68,11 @@ export default {
       return this.validation('pinyin');
     },
     correctPinyin() { 
-      let answer = [this.word.pinyin, this.word.pin1yin1], 
+      // get rid of spaces in correct answers if any
+      let answer = [
+          this.word.pinyin, 
+          this.word.pin1yin1
+        ].map(w => w.replace(/\s/g, '')), 
         attempt = this.pinyinAnswer.trim().toLowerCase(); 
       return answer.includes(attempt);
     },
