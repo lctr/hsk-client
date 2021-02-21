@@ -51,7 +51,7 @@ export default {
       words: [],
       wordLog: [],
       skippedWords: [],
-      quizLength: 25,
+      quizLength: 15,
       attempted: 0,
       correctPinyin: 0,
       correctMeaning: 0,

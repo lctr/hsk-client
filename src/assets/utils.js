@@ -1,6 +1,6 @@
 
 class Utils {
-  static shuffleArray(arr, size = 25) {
+  static shuffleArray(arr, size = 15) {
     const len = arr.length; 
     let indxs = [], r = size, rand;
     // generate an array of necessary lengh consisting of 
