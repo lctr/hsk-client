@@ -60,6 +60,7 @@ export default {
   }, 
   methods: {
     loadQuiz(level) {
+      if (this.sleepingServer) return; 
       this.toggleLoading();
       axios.get(`${SERVER}/words/bylevel/${level}`)
         .then(words => {
