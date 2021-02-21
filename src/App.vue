@@ -1,21 +1,28 @@
 <template>
   <div id="app">
     <Header />
-    <SelectLevel v-on:level-selected="loadQuiz" />
+    <SelectLevel 
+      v-on:level-selected="loadQuiz" 
+    />
     <div v-if="loading">
       <LoadingDots />
     </div>
     <div id="quiz" v-if="loaded">
-      <Words v-bind:words="words" v-on:lock-question="logAttempt" />
+      <Words 
+        v-bind:words="words" 
+        v-on:lock-question="logAttempt" 
+      />
     </div>
     <div v-if="attempted === quizLength">
-      <QuizResults v-if="completed"
+      <QuizResults 
+        v-if="completed"
         v-bind:wordLog="wordLog" 
         v-bind:attempted="attempted"
         v-bind:skippedWords="skippedWords"
         v-bind:quizLength="quizLength"
         v-bind:correctPinyin="correctPinyin"
-        v-bind:correctMeaning="correctMeaning" />
+        v-bind:correctMeaning="correctMeaning" 
+      />
     </div>
     <div v-if="sleepingServer">
       Server's asleep. Awaken her?? 
