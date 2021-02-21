@@ -1,6 +1,7 @@
 <template>
   <div class="quiz-selection" v-if="!disabled">
-    <h3>Select an HSK level to be quizzed on.</h3>
+    <h3>Select HSK level to be quizzed on.</h3>
+    <p><i>Note: characters provided are <b>Simplified</b>.</i></p>
     <select v-model="selected" :disabled="disabled">
       <option disabled value="">Please select one</option>
       <option v-for="(level, idx) in levels" v-bind:key="idx"> 
