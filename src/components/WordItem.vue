@@ -1,6 +1,6 @@
 <template>
-  <transition name="completed" mode="in-out">
-  <div class="word-item">
+  <transition name="fade" mode="out-in">
+  <div class="word-item" v-if="shown">
     <div class="word-item-character"> 
       {{ word.character }}
     </div>
@@ -57,6 +57,7 @@ export default {
       meaningAnswer: '',
       locked: false,
       gaveUp: false,
+      shown: true
     }
   },
   computed: {
@@ -81,6 +82,9 @@ export default {
     },
   },
   methods: {
+    hide(el) {
+      el.style.display = 'none'; 
+    },
     validation(kind) {
       let correct = false, 
         incorrect = false, 
@@ -111,13 +115,15 @@ export default {
         score = this.giveUp(score); 
       }
       this.$emit('lock-question', score);
+      let $this = this; 
+      setTimeout(() => $this.shown = false, 3000);
     },
     giveUp(score) {
       score.attempted = 0; 
       score.pronunciation = -1; 
       score.meaning = -1;
       return score; 
-    }
+    },
   }
 }
 </script>
@@ -196,10 +202,11 @@ export default {
   }
 
   .complete-leave-active {
+    opacity: 0;
     transition: all 500ms ease-out 3s;
   }
   .complete-leave-to {
-    display: none;
+    opacity: 0 0.5s;
   }
 
 </style>

@@ -1,7 +1,12 @@
 <template>
   <div id="word-list">
-    <div v-bind:key="word.id" v-for="word in words">
-      <WordItem v-bind:word="word" v-on:lock-question="lockQuestion"/>
+    <div v-bind:key="word.id" 
+      v-for="(word, idx) in words"
+      v-on:remove="words.splice(idx, 1)"
+    >
+      <WordItem v-bind:word="word" 
+        v-on:lock-question="lockQuestion"
+      />
     </div>
   </div>
 </template>
