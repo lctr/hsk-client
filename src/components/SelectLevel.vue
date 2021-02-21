@@ -8,7 +8,7 @@
         {{ levels[idx] }} 
       </option>
     </select>
-    <button class="btn" @click="levelSelected" :disabled="ready">
+    <button class="btn" @click="levelSelected" :disabled="!selected">
       开始 ~ <i>start</i> !
     </button>
   </div>
