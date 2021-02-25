@@ -1,72 +1,59 @@
 <template>
   <div id="quiz-results">
     <h1>Results</h1>
-    <p>On this glorious {{date}}, you have achieved the following quiz scores.</p>
-    <table class="results">
-      <thead>
-        <tr>
-          <th colspan="2">Overall</th>
-          <th colspan="2">Pinyin</th>
-          <th colspan="2">Meaning</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>attempted: </td>
-          <td>{{attempted - skipped}}</td>
-          <td># correct: </td>
-          <td>{{correctPinyin}}</td>
-          <td># correct: </td>
-          <td>{{correctMeaning}}</td>
-        </tr>
-        <tr>
-          <td>score: </td>
-          <td>{{overallScore}}%</td>
-          <td>score: </td>
-          <td>{{correctPinyin / attempted}}%</td>
-          <td>score: </td>
-          <td>{{ correctMeaning / attempted}}%</td>
-        </tr>
-      </tbody>
-    </table>
+    <p>
+      On this glorious {{ date }}, you have achieved the following quiz scores.
+    </p>
+    <p>
+      <b> Quiz length:</b> {{ quizLength }} <br />
+      <b> Overall Score:</b> {{ overallScore }} <br />
+      <b> Pinyin Score:</b> {{ pinyinScore }} <br />
+      <b> Meaning Score:</b> {{ meaningScore }} <br />
+    </p>
+    <div class="results">
+      <ul v-bind:key="word.id" v-for="word in wordLog">
+        <li>{{ showAttempt(word) }}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: "QuizResults",
-  props: [
-    "wordLog", "skippedWords", "quizLength", 
-    "attempted", "correctPinyin", "correctMeaning"
-  ],
-  data() {
-    return {
-      date: new Date().toUTCString(),
-    }
-  },
-  methods: {},
-  computed: {
-    skipped() {
-      let both = this.skippedWords.length; 
-      return both; 
+  export default {
+    name: "QuizResults",
+    props: ["wordLog", "quizLength"],
+    data() {
+      return {
+        date: new Date().toUTCString(),
+        skipped: this.wordLog.filter((x) => x.gaveUp),
+        pinyinCorrect: this.wordLog.reduce((a, c) => a + c.pinyinScore, 0),
+        meaningCorrect: this.wordLog.reduce((a, c) => a + c.meaningScore, 0),
+      };
     },
-    overallScore() {
-      let denominator = 2 * this.attempted, 
-        numerator = this.correctPinyin + this.correctMeaning; 
-      if (denominator) {
-        return Math.round((numerator / denominator) * 100, 4); 
-      } else {
-        return 0;
-      }
-    }
-  }
-}
+    methods: {
+      showAttempt(word) {
+        return Object.entries(word)
+          .map((x) => x.join(" | "))
+          .join("\n");
+      },
+    },
+    computed: {
+      pinyinScore() {
+        return this.pinyinCorrect / this.quizLength;
+      },
+      meaningScore() {
+        return this.meaningCorrect / this.quizLength;
+      },
+      overallScore() {
+        return (this.pinyinCorrect + this.meaningCorrect) / (2 * this.quizLength);
+      },
+    },
+  };
 </script>
 
 <style scoped>
-
   #quiz-results {
-    margin-top: 40px; 
+    margin-top: 40px;
     margin: auto;
     padding: 4px 6px;
     max-width: 600px;
@@ -77,15 +64,15 @@ export default {
     padding: 2px 4px;
     table-layout: fixed;
     width: 100%;
-    border: 1px solid #ccc; 
+    border: 1px solid #ccc;
   }
 
   th {
-    text-align: left; 
+    text-align: left;
   }
 
   p {
-    margin-top: 2px; 
+    margin-top: 2px;
     margin-bottom: 2px;
   }
 </style>
