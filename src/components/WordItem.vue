@@ -43,7 +43,7 @@
 
       <div class="word-item-complete">
         <button class="checkbox" v-on:click="recordAttempt" :disabled="locked">
-          ✓
+          {{ attempted ? "+" : "×" }}
         </button>
       </div>
     </div>
@@ -53,14 +53,13 @@
 <script>
   export default {
     name: "WordItem",
-    props: ["word"],
+    props: ["word", "paused"],
     data() {
       return {
         pinyinAnswer: "",
         meaningAnswer: "",
         locked: false,
         gaveUp: false,
-        shown: true,
       };
     },
     computed: {
@@ -68,18 +67,18 @@
         return (this.pinyinAnswer + this.meaningAnswer).trim();
       },
       pinyinStatus() {
-        return this.validation("pinyin");
+        return this.validate("pinyin");
       },
       correctPinyin() {
         // get rid of spaces in correct answers if any
-        let answer = [this.word.pinyin, this.word.pin1yin1].map((w) =>
-            w.replace(/\s/g, "")
-          ),
+        let answer = [this.word.pinyin, this.word.pin1yin1]
+            .map((w) => w.replace(/\s/g, ""))
+            .join(""),
           attempt = this.pinyinAnswer.trim().toLowerCase();
         return answer.includes(attempt);
       },
       meaningStatus() {
-        return this.validation("meaning");
+        return this.validate("meaning");
       },
       correctMeaning() {
         let answer = this.word.english,
@@ -88,10 +87,7 @@
       },
     },
     methods: {
-      hide(el) {
-        el.style.display = "none";
-      },
-      validation(kind) {
+      validate(kind) {
         let correct = false,
           incorrect = false,
           locked = this.locked && true,
@@ -132,6 +128,7 @@
     align-items: center;
     justify-content: center;
     gap: 0 10px;
+    transition: all 0.5ms;
   }
 
   .word-item:hover {

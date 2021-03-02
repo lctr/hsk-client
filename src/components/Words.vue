@@ -1,11 +1,15 @@
 <template>
   <div id="word-list">
     <div class="columns"></div>
-    <div v-bind:key="word.id" v-for="word in words">
-      <transition name="complete" mode="in-out">
-        <WordItem v-bind:word="word" v-on:lock-question="lockQuestion" />
-      </transition>
-    </div>
+    <transition-group name="complete" mode="out-in" tag="div">
+      <div v-bind:key="word.id" v-for="word in words">
+        <WordItem
+          v-bind:word="word"
+          v-bind:paused="paused"
+          v-on:lock-question="lockQuestion"
+        />
+      </div>
+    </transition-group>
   </div>
 </template>
 
@@ -21,6 +25,7 @@
     data() {
       return {
         columns: ["Character", "Pinyin", "Meaning", "Done"],
+        paused: false,
       };
     },
     computed: {
@@ -30,12 +35,15 @@
     },
     methods: {
       lockQuestion(word) {
+        this.paused = true;
         this.wordLog.push(word);
         let words = this.words;
         let idx = words.findIndex((w) => w.id === word.id);
-
-        setTimeout(() => words.splice(idx, 1), 3000);
-
+        let th = this;
+        setTimeout(() => {
+          words.splice(idx, 1);
+          th.paused = false;
+        }, 3000);
         if (this.finished) this.$emit("show-results");
       },
     },
@@ -47,11 +55,13 @@
     margin-top: 100px;
   }
 
+  .complete-enter-active,
   .complete-leave-active {
-    opacity: 0;
-    transition: all 3s ease-out 3s;
+    transition: opacity 0.5s;
   }
+
+  .complete-enter,
   .complete-leave-to {
-    opacity: 0 3s;
+    opacity: 0;
   }
 </style>

@@ -1,31 +1,40 @@
 <template>
   <div id="app">
     <Header />
+
+    <Login v-bind:loggedIn="loggedIn" v-on:logged-in="updateUser" />
+
     <SelectLevel v-on:level-selected="loadQuiz" />
-    <div v-if="loading">
-      <LoadingDots />
-    </div>
-    <div id="quiz" v-if="loaded">
-      <Words
-        v-bind:words="words"
-        v-bind:wordLog="wordLog"
-        v-on:show-results="showResults"
-      />
-    </div>
-    <div v-if="completed">
-      <QuizResults v-bind:wordLog="wordLog" v-bind:quizLength="quizLength" />
-    </div>
+
+    <LoadingDots v-if="loading" />
+
+    <Words
+      v-if="loaded"
+      v-bind:words="words"
+      v-bind:wordLog="wordLog"
+      v-on:show-results="showResults"
+    />
+
+    <QuizResults
+      v-if="completed"
+      v-bind:wordLog="wordLog"
+      v-bind:quizLength="quizLength"
+      v-bind:userId="userId"
+    />
+
     <div v-if="sleepingServer">Server's asleep. Awaken her??</div>
   </div>
 </template>
 
 <script>
-  import Utils from "./assets/utils";
   import Header from "./components/Header";
   import SelectLevel from "./components/SelectLevel";
   import LoadingDots from "./components/LoadingDots";
   import Words from "./components/Words";
   import QuizResults from "./components/QuizResults";
+  import Login from "./components/Login";
+
+  import Utils from "./assets/utils";
   import axios from "axios";
 
   const SERVER = "https://hsk-server.herokuapp.com";
@@ -38,6 +47,7 @@
       LoadingDots,
       Words,
       QuizResults,
+      Login,
     },
     data() {
       return {
@@ -48,8 +58,10 @@
         words: [],
         quizLength: 15,
         wordLog: [],
-        attempted: 0,
         completed: false,
+        paused: false,
+        loggedIn: false,
+        userId: null,
       };
     },
     methods: {
@@ -79,6 +91,15 @@
         this.completed = true;
         let $this = this;
         setTimeout(() => $this.toggleLoading(), 1000);
+      },
+      updateUser(userId) {
+        if (userId) {
+          this.userId = userId;
+          this.loggedIn = true;
+        } else {
+          this.userId = "";
+          this.loggedIn = false;
+        }
       },
     },
     created() {
