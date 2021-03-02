@@ -6,9 +6,10 @@
     </p>
     <p>
       <b> Quiz length:</b> {{ quizLength }} <br />
-      <b> Overall Score:</b> {{ overallScore }} <br />
-      <b> Pinyin Score:</b> {{ pinyinScore }} <br />
-      <b> Meaning Score:</b> {{ meaningScore }} <br />
+      <b> Skipped:</b> {{ skipped.length }} <br />
+      <b> Overall Score:</b> {{ overallScore }}% <br />
+      <b> Pinyin Score:</b> {{ pinyinScore }}% <br />
+      <b> Meaning Score:</b> {{ meaningScore }}% <br />
     </p>
     <div class="results">
       <ul v-bind:key="word.id" v-for="word in wordLog">
@@ -25,7 +26,7 @@
     data() {
       return {
         date: new Date().toUTCString(),
-        skipped: this.wordLog.filter((x) => x.gaveUp),
+        skipped: this.wordLog.filter((x) => !x.attempted),
         pinyinCorrect: this.wordLog.reduce((a, c) => a + c.pinyinScore, 0),
         meaningCorrect: this.wordLog.reduce((a, c) => a + c.meaningScore, 0),
       };
@@ -33,19 +34,25 @@
     methods: {
       showAttempt(word) {
         return Object.entries(word)
-          .map((x) => x.join(" | "))
-          .join("\n");
+          .map((x) => x.join(": "))
+          .join(", ");
+      },
+      score(n, d) {
+        return Number(((n * 100) / d / 100).toFixed(2) * 100);
       },
     },
     computed: {
       pinyinScore() {
-        return this.pinyinCorrect / this.quizLength;
+        return this.score(this.pinyinCorrect, this.quizLength);
       },
       meaningScore() {
-        return this.meaningCorrect / this.quizLength;
+        return this.score(this.meaningCorrect, this.quizLength);
       },
       overallScore() {
-        return (this.pinyinCorrect + this.meaningCorrect) / (2 * this.quizLength);
+        return this.score(
+          this.pinyinCorrect + this.meaningCorrect,
+          2 * this.quizLength
+        );
       },
     },
   };

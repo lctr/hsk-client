@@ -65,7 +65,7 @@
     },
     computed: {
       attempted() {
-        return this.pinyinAnswer + this.meaningAnswer;
+        return (this.pinyinAnswer + this.meaningAnswer).trim();
       },
       pinyinStatus() {
         return this.validation("pinyin");
@@ -99,11 +99,6 @@
           status = `correct${kind[0].toUpperCase()}${kind.slice(1)}`;
         if (this[input]) {
           this[status] ? (correct = locked) : (incorrect = locked);
-          // if (this[status]) {
-          //   correct = locked;
-          // } else {
-          //   incorrect = locked;
-          // }
         }
         return { "is-correct": correct, "is-incorrect": incorrect };
       },
@@ -113,7 +108,7 @@
         this.word.meaningAttempt = this.meaningAnswer;
         this.word.pinyinScore = this.correctPinyin ? 1 : 0;
         this.word.meaningScore = this.correctMeaning ? 1 : 0;
-
+        this.word.attempted = this.attempted ? true : false;
         this.$emit("lock-question", this.word);
       },
     },

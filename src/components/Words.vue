@@ -20,13 +20,12 @@
     props: ["words", "quizLength", "wordLog"],
     data() {
       return {
-        complete: 0,
         columns: ["Character", "Pinyin", "Meaning", "Done"],
       };
     },
     computed: {
       finished() {
-        return this.complete === this.quizLength;
+        return this.wordLog.length === this.quizLength;
       },
     },
     methods: {

@@ -6,9 +6,13 @@
       <LoadingDots />
     </div>
     <div id="quiz" v-if="loaded">
-      <Words v-bind:words="words" v-bind:wordLog="wordLog" />
+      <Words
+        v-bind:words="words"
+        v-bind:wordLog="wordLog"
+        v-on:show-results="showResults"
+      />
     </div>
-    <div v-if="completed" v-on:show-results="showResults">
+    <div v-if="completed">
       <QuizResults v-bind:wordLog="wordLog" v-bind:quizLength="quizLength" />
     </div>
     <div v-if="sleepingServer">Server's asleep. Awaken her??</div>
