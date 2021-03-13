@@ -133,7 +133,7 @@
   }
 
   .zh {
-    font-family: "Noto Sans SC", sans-serif;
+    font-family: /* "Noto Sans SC", */ sans-serif;
   }
 
   a {
