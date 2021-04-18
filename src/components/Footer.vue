@@ -24,9 +24,8 @@ export default {
     height: 50px;
     left: 0;
     bottom: 0;
-    position: relative;
     color: #999;
-    background-color: rgba(240, 240, 240, 0.9);
-    box-shadow: 0 0 2px #666;
+    /* background-color: rgba(240, 240, 240, 0.9); */
+    /* box-shadow: 0 0 2px #666; */
   }
 </style>
