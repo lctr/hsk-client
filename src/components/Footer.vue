@@ -17,14 +17,14 @@ export default {
 
 <style>
   .footer {
-    margin: 10px auto;
+    margin: 50px auto;
     text-align: center;
-    padding: 40px 0;
+    padding: 15px 0;
     width: 100%;
-    height: 100px;
+    height: 50px;
     left: 0;
     bottom: 0;
-    /* position: relative; */
+    position: relative;
     color: #999;
     background-color: rgba(240, 240, 240, 0.9);
     box-shadow: 0 0 2px #666;
