@@ -23,11 +23,14 @@
     />
 
     <div v-if="sleepingServer">Server's asleep. Awaken her??</div>
+
+    <Footer/>
   </div>
 </template>
 
 <script>
   import Header from "./components/Header";
+  import Footer from "./components/Footer";
   import SelectLevel from "./components/SelectLevel";
   import LoadingDots from "./components/LoadingDots";
   import Words from "./components/Words";
@@ -43,6 +46,7 @@
     name: "App",
     components: {
       Header,
+      Footer,
       SelectLevel,
       LoadingDots,
       Words,
@@ -129,7 +133,6 @@
 
   #app {
     margin: 0 auto;
-    width: 98vw;
   }
 
   .zh {
